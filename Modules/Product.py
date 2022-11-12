@@ -3,6 +3,8 @@ import pandas as pd
 from rich.console import Console
 from rich.table import Table
 
+console = Console()
+
 values = ["category", "item", "variety", "kilograms", "price"]
 database_name = "../Databases/store.db"
 csv_filename = "./Databases/database.csv"
@@ -17,7 +19,6 @@ def displayData(cursor): # Display data from sql database
         table.add_row(*row)
         x += 1
     if x != 0:
-        console = Console()
         console.print(table)
         data = cursor.execute('''SELECT price FROM Products''')
         overall = 0
@@ -29,7 +30,6 @@ def displayData(cursor): # Display data from sql database
         table = Table()
         table.add_column("Cart price", style="cyan")
         table.add_row(str(overall) + " $")
-        console = Console()
         console.print(table)
 
     return x
@@ -46,9 +46,9 @@ def getProductPrice(category, item, variety, unit):
     return price
 
 def weightFromScale(): # Function for getting informations from external scale
-    print("This feature is currently unavailable")
-    return 10
-
+    console.print("[red bold]\n This feature is currently unavailable \n")
+    console.print("[green bold] Please enter weight manually \n")
+    
 class Product:
     def __init__(self, database_name):
         self.connection = sqlite3.connect(database_name)
@@ -72,17 +72,11 @@ class Product:
     def dropData(self):
         self.cursor.execute('DELETE FROM Products;',);
         if self.cursor.rowcount == 0:
-            print("Your recipe is empty, add some items to cart")
+            console.print("[red bold]\n Your recipe is empty, add some items to cart! \n")
         else:
-            print('We have deleted', self.cursor.rowcount, 'records from Products.')
+            console.print("[green bold]\n You deleted successfully %s records from cart! \n"%self.cursor.rowcount)
 
     def printRecipe(self):
         if displayData(self.cursor) == 0:
-            print("Nothing to display, please add some items to cart")
+            console.print("[red bold]\n Nothing to display, please add some items to cart \n")
             
-
-    def sendDataToServer(self):
-        if displayData(self.cursor) == 0:
-            print("Nothing to push")
-        else:
-            print("This feature is currently unavalible")

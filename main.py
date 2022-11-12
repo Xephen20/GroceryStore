@@ -1,9 +1,10 @@
-import os
+import os, socket
 from simple_term_menu import TerminalMenu
 import pandas as pd
 from art import *
-from Modules.Product import Product, weightFromScale, getProductPrice
+from Modules.Product import Product, weightFromScale, getProductPrice, console
 from getpass import getpass
+from settings import host, port
 
 values = ["category", "item", "variety", "unit", "price"]
 main_menu_options = ["Add item to cart", "Delete items from cart", "Send data to server", "Check recipe", "Quit"]
@@ -74,11 +75,12 @@ def main():
                     val = int(unit)
                     break
                 except ValueError:
+                    os.system('clear')
                     try:
                         float(unit)
                         break
                     except ValueError:
-                        print("This is not a number. Please enter a valid number")
+                        console.print("[red bold]\n This is not a number. Please enter a valid number \n")
 
             ProductValues = [menu_value1, menu_value2, menu_value3, unit]
             ProductToPush = Product(database_name)
@@ -91,29 +93,29 @@ def main():
         
         if (optionsChoice == main_menu_options[2]):
             os.system('clear')
-            
-            menu_list = ["Send Last Record", "Send Full Recipe", "Back"]
-            subMenu = TerminalMenu(menu_list, title="Select")
-            menu_entry_index = subMenu.show()
-            menu_value = menu_list[menu_entry_index]
-            if menu_value == menu_list[0]:
-                ProductToPush = Product(database_name)
-                ProductToPush.sendDataToServer()
-            if menu_value == menu_list[1]:
-                host = input("Type Server Ip: ")
-                port = input("Type Server Port: ")
-                username = input("Type Username: ")
-                password = getpass()
-                sendToServer(username, password, host, port)
+            console.print("[yellow bold]\n Connect to: %s:%s \n"%(host, port))
+            username = input("Type Username: ")
+            password = getpass()
+            sendToServer(username, password)
         if(optionsChoice == main_menu_options[3]):
             os.system('clear')
             ProductToPush = Product(database_name)
             ProductToPush.printRecipe()
 
-def sendToServer(username, password, host, port):
-    # API Communication
-    pass
-
+def sendToServer(username, password):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        try:
+            s.connect((host, int(port)))
+            SEPARATOR = "<SEPARATOR>"
+            os.system("cp ./Databases/store.db ./Databases/store_copy.db")
+            file = "./Databases/store_copy.db"
+            filesize = os.path.getsize(file)
+            s.send(f"{file}{SEPARATOR}{filesize}".encode())
+            console.print("[green bold underline]\n Can't Connect \n")
+        except:
+            os.system('clear')
+            console.print("[red bold underline]\n Can't connect to the server\n")
+    
 if __name__ == '__main__':
     os.system('clear')
     main()
