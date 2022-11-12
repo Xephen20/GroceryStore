@@ -1,0 +1,4 @@
+simple_term_menu==1.5.2
+pandas==1.4.3
+art==5.7
+rich==12.6.0
