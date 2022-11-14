@@ -73,12 +73,20 @@ def main():
                 unit = input("Enter %s weight in kilograms (%s $/kg): "%(menu_value2, getProductPrice(menu_value1, menu_value2, menu_value3, 1)))
                 try:
                     val = int(unit)
-                    break
+                    if val > 0:
+                        break
+                    else:
+                        os.system('clear')
+                        console.print("[red bold]\n Please enter a valid number \n")
                 except ValueError:
                     os.system('clear')
                     try:
                         float(unit)
-                        break
+                        if float(unit) > 0:
+                            break
+                        else:
+                            os.system('clear')
+                            console.print("[red bold]\n Please enter a valid number \n")
                     except ValueError:
                         console.print("[red bold]\n This is not a number. Please enter a valid number \n")
 
