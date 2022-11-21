@@ -7,7 +7,7 @@ pip3 install virtualenv
 ```
 Build venv
 ```sh
-virtualenv ./enviroment/project_teldat
+source ./enviroment/project_teldat/bin/activate
 pip3 install --upgrade pip
 pip3 install -r ./enviroment/requirements.txt
 ```
